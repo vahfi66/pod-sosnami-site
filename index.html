@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Под соснами — демонстрационный каталог загородных домов и бань с планировками и расчётом стоимости.">
+  <meta name="theme-color" content="#202a21">
+  <title>Под соснами — дома для жизни за городом</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/manrope.css">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="assets/gsap.min.js"></script>
+  <script defer src="assets/ScrollTrigger.min.js"></script>
+  <script defer src="site.js"></script>
+</head>
+<body>
+  <a class="skip" href="#projects">Перейти к проектам</a>
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-scene">
+        <div class="hero-frame">
+          <picture>
+            <source media="(max-width: 600px) and (orientation: portrait)" srcset="assets/hero-phone.webp" width="887" height="1774">
+            <source media="(max-width: 1100px) and (orientation: portrait)" srcset="assets/hero-mobile.webp">
+            <img class="hero-photo" src="assets/hero.webp" alt="Одноэтажный деревянный дом с освещённой террасой среди сосен" fetchpriority="high" width="1586" height="908">
+          </picture>
+          <div class="hero-measure" aria-hidden="true">
+            <i class="extension"></i><i class="extension"></i><i class="dimension"></i>
+            <span class="hero-caption">Проект «Сосны» · 112 м²</span>
+            <span class="hero-phone-area">112 м²</span>
+          </div>
+          <span class="hero-phone-project" aria-hidden="true">Проект «Сосны»</span>
+        </div>
+      </div>
+      <div class="hero-inner wrap">
+        <header class="masthead">
+          <a class="brand" href="#top">Под соснами</a>
+          <nav aria-label="Основная навигация">
+            <a href="#projects" data-category="home">Дома</a>
+            <a href="#projects" data-category="bath">Бани</a>
+            <a href="#calculator">Комплектации</a>
+          </nav>
+        </header>
+        <div class="hero-copy">
+          <h1 id="hero-title"><span class="hero-title-main">Строим дома</span><span class="hero-title-sub">для жизни за городом</span></h1>
+          <div class="actions">
+            <a class="button button-light" href="#projects">Смотреть проекты</a>
+            <a class="text-link" href="#calculator">Рассчитать стоимость <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap catalog" id="projects" aria-labelledby="projects-title">
+      <div class="catalog-top">
+        <div class="segmented" aria-label="Тип проекта">
+          <button type="button" data-filter="home" aria-pressed="true">Дома</button>
+          <button type="button" data-filter="bath" aria-pressed="false">Бани</button>
+        </div>
+        <span class="rule" aria-hidden="true"></span>
+      </div>
+      <h2 id="projects-title" class="visually-hidden">Проекты</h2>
+      <div id="project-grid" class="project-grid"></div>
+    </section>
+
+    <section class="calculator section" id="calculator" aria-labelledby="calculator-title">
+      <div class="wrap">
+        <div class="section-heading">
+          <h2 id="calculator-title">Сколько стоит<br>построить?</h2>
+          <p>Укажите площадь и выберите комплектацию. Сразу увидите ориентир по цене и список работ.</p>
+        </div>
+        <div class="calc-layout">
+          <div class="calc-controls">
+            <fieldset>
+              <legend>Что строим</legend>
+              <div class="segmented">
+                <button type="button" data-calc-type="home" aria-pressed="true">Дом</button>
+                <button type="button" data-calc-type="bath" aria-pressed="false">Баня</button>
+              </div>
+            </fieldset>
+            <div class="selected-project" id="selected-project" hidden>
+              <span id="selected-name"></span><button type="button" id="clear-project">Сбросить проект</button>
+            </div>
+            <div class="area">
+              <div class="area-head"><label for="area-number">Площадь постройки</label><div class="area-input"><input id="area-number" type="number" min="40" max="300" value="112" step="1" inputmode="numeric" required aria-describedby="area-error"><span aria-hidden="true">м²</span></div></div>
+              <input id="area-range" type="range" min="40" max="300" value="112" step="1" aria-label="Площадь постройки, м²">
+              <div class="area-limits"><span id="area-min">40 м²</span><span id="area-max">300 м²</span></div>
+              <p class="area-error" id="area-error" aria-live="polite"></p>
+            </div>
+            <fieldset>
+              <legend>Комплектация</legend>
+              <div class="packages">
+                <label><input type="radio" name="package" value="shell" checked><span><strong id="shell-title">Утеплённый дом без отделки</strong><small id="shell-desc">С окнами и входной дверью, без отделки и коммуникаций</small></span></label>
+                <label><input type="radio" name="package" value="ready"><span><strong id="ready-title">Готовый дом</strong><small id="ready-desc">С отделкой, электрикой, отоплением и сантехникой</small></span></label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="calc-result">
+            <p class="eyebrow">Предварительная стоимость</p>
+            <output id="price" for="area-number area-range">—</output>
+            <p id="formula" class="formula"></p>
+            <hr>
+            <h3>Что входит</h3>
+            <ul class="included" id="included"></ul>
+            <div id="addition" class="addition" hidden></div>
+            <a class="button button-dark" href="#estimate" id="estimate-link">Заявка на смету <span aria-hidden="true">↗</span></a>
+            <small class="demo-note">Демонстрационный расчёт по площади</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap tours" id="tours" aria-labelledby="tours-title">
+      <div class="section-heading">
+        <h2 id="tours-title">Посмотрите,<br>как устроен дом</h2>
+        <p>Терраса, гостиная и детали, которые удобно рассмотреть вблизи.</p>
+      </div>
+      <div class="tour-layout">
+        <div>
+          <div class="player" id="tour-player">
+            <button class="video-cover" type="button" id="play-tour">
+              <img id="tour-image" src="assets/tour-home-poster.webp" alt="" loading="lazy" width="1280" height="720">
+              <span><i aria-hidden="true">▶</i> Смотреть обзор</span>
+            </button>
+            <video id="tour-video" controls playsinline preload="none" hidden></video>
+          </div>
+          <div class="tour-caption"><div><h3 id="tour-title">Экскурсия по дому «Сосны»</h3><p id="tour-note">Демонстрационный обзор · 0:12</p><p id="tour-error" role="status" hidden>Видео не удалось воспроизвести. Попробуйте ещё раз.</p></div><a class="text-link" id="tour-project" href="#projects">К проекту <span aria-hidden="true">↗</span></a></div>
+        </div>
+        <div class="tour-options" aria-label="Выбрать видео">
+          <button type="button" data-tour="home" aria-pressed="true"><img src="assets/sosny.webp" alt="" loading="lazy"><span>Экскурсия по «Соснам»<small>0:12</small></span></button>
+          <button type="button" data-tour="bath" aria-pressed="false"><img src="assets/bath.webp" alt="" loading="lazy"><span>Обзор бани «Терраса»<small>0:09</small></span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section warranty" id="warranty" aria-labelledby="warranty-title">
+      <div class="wrap warranty-layout">
+        <div><h2 id="warranty-title">Гарантии</h2><p>Пример условий для разных видов работ.</p></div>
+        <div class="warranty-items">
+          <details><summary>Конструкция дома</summary><p>Условия по фундаменту, стенам и кровле описываются в договоре. При обнаружении дефекта пригодятся фотографии и описание того, где и когда он появился.</p></details>
+          <details><summary>Монтаж и отделка</summary><p>Гарантия распространяется на работы, перечисленные в договоре. Замечания при приёмке фиксируются в акте, чтобы было понятно, что нужно исправить.</p></details>
+          <details><summary>Оборудование</summary><p>Для печей, отопительного и другого оборудования действуют условия производителя. Вместе с оборудованием передаются паспорта и инструкции.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section estimate" id="estimate" aria-labelledby="estimate-title">
+      <div class="wrap estimate-layout">
+        <div>
+          <h2 id="estimate-title">Заявка<br>на смету</h2>
+          <p class="estimate-intro">Расскажите, какой дом или баню вы хотите построить.</p>
+          <div class="estimate-summary" id="estimate-summary" hidden>
+            <p id="summary-text"></p><strong id="summary-price"></strong>
+            <a class="text-link" href="#calculator">Изменить расчёт <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div class="form-stage">
+          <form id="estimate-form" autocomplete="off">
+            <label>Имя <input required maxlength="80" id="visitor-name" placeholder="Как к вам обращаться" autocomplete="off"></label>
+            <label>Телефон <input required type="tel" maxlength="24" id="visitor-phone" placeholder="+7 (___) ___-__-__" aria-describedby="phone-error" autocomplete="off"></label>
+            <small id="phone-error" class="form-error" hidden>Введите номер, содержащий от 10 до 15 цифр.</small>
+            <label>Комментарий <small>необязательно</small><textarea rows="3" maxlength="500" placeholder="Например, участок уже есть"></textarea></label>
+            <label class="consent"><input type="checkbox" required><span>Согласен на обработку персональных данных</span></label>
+            <button class="button button-light" type="submit">Отправить заявку <span aria-hidden="true">↗</span></button>
+            <small class="demo-note">Демо-режим. Данные не отправляются.</small>
+          </form>
+          <div class="form-success" id="form-success" hidden>
+            <span aria-hidden="true">✓</span>
+            <h3 tabindex="-1" id="success-title">Спасибо за заявку!</h3>
+            <p>Вы завершили демо. Данные не отправлены.</p>
+            <a href="#projects" class="button button-light" id="return-projects">Вернуться к проектам</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer class="footer"><div class="wrap"><a class="brand" href="#top">Под соснами</a><p>Портфолио-проект вымышленной компании</p><a class="text-link" href="#top">Наверх <span aria-hidden="true">↑</span></a></div></footer>
+  </main>
+</body>
+</html>
