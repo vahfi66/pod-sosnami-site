@@ -399,11 +399,18 @@ setType("home");
 if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
   gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
-    gsap.timeline({ defaults: { ease: "power2.out", clearProps: "transform,opacity" } })
+    const phoneHero = matchMedia("(max-width: 600px) and (orientation: portrait)").matches;
+    const heroTimeline = gsap.timeline({ defaults: { ease: "power2.out", clearProps: "transform,opacity" } })
       .from(".hero-title-main, .hero-title-sub", { opacity: 0.68, y: 9, duration: 0.43, stagger: 0.09 }, 0)
-      .from(".extension", { scaleY: 0, duration: 0.21 }, 0.15)
-      .from(".dimension", { scaleX: 0, duration: 0.35 }, 0.36)
-      .from(".hero-caption", { opacity: 0, y: 4, duration: 0.2 }, 0.65);
+      .from(phoneHero ? ".extension:first-child" : ".extension", { scaleY: 0, duration: 0.21 }, 0.15)
+      .from(".dimension", { scaleX: 0, duration: 0.35 }, 0.36);
+    if (phoneHero) {
+      heroTimeline
+        .from(".extension:nth-child(2)", { scaleY: 0, duration: 0.14 }, 0.71)
+        .from(".hero-phone-area", { opacity: 0, y: 4, duration: 0.2 }, 0.81);
+    } else {
+      heroTimeline.from(".hero-caption", { opacity: 0, y: 4, duration: 0.2 }, 0.65);
+    }
     all(".section-heading, .warranty-layout, .form-stage").forEach(section => {
       gsap.from(section, {
         y: 13, opacity: 0.84, duration: 0.46, ease: "power2.out",

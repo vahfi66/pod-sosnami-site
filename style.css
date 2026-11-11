@@ -249,6 +249,7 @@ h2{font-size:clamp(40px,6.2vw,91px);font-weight:680;letter-spacing:-.064em;line-
     left:8%;right:4%;bottom:auto;height:24px;
     top:min(calc(var(--phone-image-height) * .69 - var(--phone-shift)),calc(100% - 105px))
   }
+  .hero-measure::before{top:-34px}
   .hero-caption{display:none}
   .hero-phone-area,.hero-phone-project{
     display:block;position:absolute;color:var(--paper);font-size:12px;font-weight:650;text-shadow:0 1px 6px #101810
