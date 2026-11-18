@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Под соснами — демонстрационный каталог загородных домов и бань с планировками и расчётом стоимости.">
+  <meta name="description" content="Под соснами — проекты загородных домов и бань, расчёт стоимости строительства, достройка и отопление. Демонстрационный сайт.">
   <meta name="theme-color" content="#202a21">
   <title>Под соснами — дома для жизни за городом</title>
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
@@ -14,7 +14,23 @@
   <script defer src="site.js"></script>
 </head>
 <body>
-  <a class="skip" href="#projects">Перейти к проектам</a>
+  <a class="skip" href="#hero-title">Перейти к содержимому</a>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a class="brand" href="#top">Под соснами</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">Меню</button>
+      <nav id="main-nav" aria-label="Основная навигация">
+        <a href="#projects" data-category="home">Дома</a>
+        <a href="#projects" data-category="bath">Бани</a>
+        <a href="#services">Услуги</a>
+        <a href="#calculator">Расчёт</a>
+        <a href="#process">Этапы</a>
+        <a href="#warranty">Гарантии</a>
+        <a href="#faq">Вопросы</a>
+        <a class="nav-estimate" href="#estimate">Заявка на смету</a>
+      </nav>
+    </div>
+  </header>
   <main id="top">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-scene">
@@ -33,16 +49,8 @@
         </div>
       </div>
       <div class="hero-inner wrap">
-        <header class="masthead">
-          <a class="brand" href="#top">Под соснами</a>
-          <nav aria-label="Основная навигация">
-            <a href="#projects" data-category="home">Дома</a>
-            <a href="#projects" data-category="bath">Бани</a>
-            <a href="#calculator">Комплектации</a>
-          </nav>
-        </header>
         <div class="hero-copy">
-          <h1 id="hero-title"><span class="hero-title-main">Строим дома</span><span class="hero-title-sub">для жизни за городом</span></h1>
+          <h1 id="hero-title" tabindex="-1"><span class="hero-title-main">Строим дома</span><span class="hero-title-sub">для жизни за городом</span></h1>
           <div class="actions">
             <a class="button button-light" href="#projects">Смотреть проекты</a>
             <a class="text-link" href="#calculator">Рассчитать стоимость <span aria-hidden="true">→</span></a>
@@ -63,48 +71,128 @@
       <div id="project-grid" class="project-grid"></div>
     </section>
 
+    <section class="section wrap services" id="services" aria-labelledby="services-title">
+      <div class="section-heading">
+        <h2 id="services-title">Что строим<br>и достраиваем</h2>
+        <p>Выберите проект дома или бани из каталога. Если стройка уже началась или в доме нужно обновить отопление, опишите задачу для отдельной сметы.</p>
+      </div>
+      <div class="service-list">
+        <article class="service-primary">
+          <h3>Дома и бани с нуля</h3>
+          <p>Для постоянной жизни, дачи или бани на своём участке. Выберите утеплённую постройку без отделки или готовый вариант. Планировку обсуждаем до расчёта сметы.</p>
+          <a class="button button-light" href="#projects" data-category="home">Выбрать проект</a>
+        </article>
+        <article>
+          <h3>Достройка дома</h3>
+          <p>Возьмёмся и за дом после другой бригады. Сначала выясним, на чём остановились, затем осмотрим выполненные работы и составим список того, что осталось.</p>
+          <a class="text-link" href="#calculator" data-service="finish">Указать этап стройки <span aria-hidden="true">→</span></a>
+        </article>
+        <article>
+          <h3>Отопление</h3>
+          <p>Установим отопление с нуля или обновим существующее. Например, если верхний этаж плохо прогревается или нужен тёплый пол в отдельных комнатах.</p>
+          <a class="text-link" href="#calculator" data-service="heat">Описать задачу <span aria-hidden="true">→</span></a>
+        </article>
+      </div>
+    </section>
+
     <section class="calculator section" id="calculator" aria-labelledby="calculator-title">
       <div class="wrap">
         <div class="section-heading">
           <h2 id="calculator-title">Сколько стоит<br>построить?</h2>
-          <p>Укажите площадь и выберите комплектацию. Сразу увидите ориентир по цене и список работ.</p>
+          <p>Для новой стройки можно сразу прикинуть бюджет. Для достройки или отопления соберите данные, с которых начнётся смета.</p>
         </div>
         <div class="calc-layout">
           <div class="calc-controls">
             <fieldset>
-              <legend>Что строим</legend>
-              <div class="segmented">
-                <button type="button" data-calc-type="home" aria-pressed="true">Дом</button>
-                <button type="button" data-calc-type="bath" aria-pressed="false">Баня</button>
+              <legend>Какие работы нужны</legend>
+              <div class="segmented calc-modes">
+                <button type="button" data-calc-mode="build" aria-pressed="true">С нуля</button>
+                <button type="button" data-calc-mode="finish" aria-pressed="false">Достройка</button>
+                <button type="button" data-calc-mode="heat" aria-pressed="false">Отопление</button>
               </div>
             </fieldset>
-            <div class="selected-project" id="selected-project" hidden>
-              <span id="selected-name"></span><button type="button" id="clear-project">Сбросить проект</button>
-            </div>
-            <div class="area">
-              <div class="area-head"><label for="area-number">Площадь постройки</label><div class="area-input"><input id="area-number" type="number" min="40" max="300" value="112" step="1" inputmode="numeric" required aria-describedby="area-error"><span aria-hidden="true">м²</span></div></div>
-              <input id="area-range" type="range" min="40" max="300" value="112" step="1" aria-label="Площадь постройки, м²">
-              <div class="area-limits"><span id="area-min">40 м²</span><span id="area-max">300 м²</span></div>
-              <p class="area-error" id="area-error" aria-live="polite"></p>
-            </div>
-            <fieldset>
-              <legend>Комплектация</legend>
-              <div class="packages">
-                <label><input type="radio" name="package" value="shell" checked><span><strong id="shell-title">Утеплённый дом без отделки</strong><small id="shell-desc">С окнами и входной дверью, без отделки и коммуникаций</small></span></label>
-                <label><input type="radio" name="package" value="ready"><span><strong id="ready-title">Готовый дом</strong><small id="ready-desc">С отделкой, электрикой, отоплением и сантехникой</small></span></label>
+            <div class="calc-fields" id="build-fields">
+              <fieldset>
+                <legend>Что строим</legend>
+                <div class="segmented">
+                  <button type="button" data-calc-type="home" aria-pressed="true">Дом</button>
+                  <button type="button" data-calc-type="bath" aria-pressed="false">Баня</button>
+                </div>
+              </fieldset>
+              <div class="selected-project" id="selected-project" hidden>
+                <span id="selected-name"></span><button type="button" id="clear-project">Сбросить проект</button>
               </div>
-            </fieldset>
+              <div class="area">
+                <div class="area-head"><label for="area-number">Площадь постройки</label><div class="area-input"><input id="area-number" type="number" min="40" max="300" value="112" step="1" inputmode="numeric" required aria-describedby="area-error"><span aria-hidden="true">м²</span></div></div>
+                <input id="area-range" type="range" min="40" max="300" value="112" step="1" aria-label="Площадь постройки, м²">
+                <div class="area-limits"><span id="area-min">40 м²</span><span id="area-max">300 м²</span></div>
+                <p class="area-error" id="area-error" aria-live="polite"></p>
+              </div>
+              <fieldset>
+                <legend>Комплектация</legend>
+                <div class="packages">
+                  <label><input type="radio" name="package" value="shell" checked><span><strong id="shell-title">Утеплённый дом без отделки</strong><small id="shell-desc">С окнами и входной дверью, без отделки и коммуникаций</small></span></label>
+                  <label><input type="radio" name="package" value="ready"><span><strong id="ready-title">Готовый дом</strong><small id="ready-desc">С отделкой, электрикой, отоплением и сантехникой</small></span></label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Участок</legend>
+                <div class="segmented calc-modes">
+                  <button type="button" data-land="owned" aria-pressed="true">Участок есть</button>
+                  <button type="button" data-land="search" aria-pressed="false">Ещё выбираю</button>
+                </div>
+                <label class="calc-input" id="land-field" hidden>Бюджет на землю, ₽
+                  <input type="number" id="land-budget" min="0" max="1000000000" step="1" inputmode="numeric" aria-describedby="land-help">
+                  <small id="land-help">Необязательно. Укажите свой ориентир по цене участка.</small>
+                </label>
+              </fieldset>
+            </div>
+            <div class="calc-fields" id="finish-fields" hidden>
+              <div class="calc-input">
+                <label for="finish-stage">На каком этапе стройка</label>
+                <select id="finish-stage">
+                  <option>Есть фундамент</option>
+                  <option>Есть фундамент и стены</option>
+                  <option>Дом под крышей</option>
+                  <option>Есть крыша, окна и двери</option>
+                </select>
+              </div>
+              <fieldset>
+                <legend>Что осталось сделать</legend>
+                <div class="packages">
+                  <label><input type="checkbox" name="finish-work" value="Стены и перегородки"><span>Стены и перегородки</span></label>
+                  <label><input type="checkbox" name="finish-work" value="Кровля"><span>Кровля</span></label>
+                  <label><input type="checkbox" name="finish-work" value="Утепление и фасад"><span>Утепление и фасад</span></label>
+                  <label><input type="checkbox" name="finish-work" value="Инженерные системы"><span>Инженерные системы</span></label>
+                  <label><input type="checkbox" name="finish-work" value="Внутренняя отделка"><span>Внутренняя отделка</span></label>
+                </div>
+              </fieldset>
+            </div>
+            <div class="calc-fields" id="heat-fields" hidden>
+              <div class="calc-input">
+                <label for="heat-task">Задача</label>
+                <select id="heat-task"><option>Установить отопление с нуля</option><option>Обновить существующее отопление</option><option>Добавить тёплый пол</option></select>
+              </div>
+              <div class="calc-input">
+                <label for="heat-current">Чем дом отапливается сейчас</label>
+                <select id="heat-current"><option>Отопления пока нет</option><option>Газом</option><option>Электричеством</option><option>Дровами или другим топливом</option><option>Нужно уточнить</option></select>
+              </div>
+              <label class="calc-input">Площадь дома, м² <small>Необязательно</small>
+                <input type="number" id="heat-area" min="1" max="10000" step="1" inputmode="numeric">
+              </label>
+            </div>
           </div>
           <div class="calc-result">
-            <p class="eyebrow">Предварительная стоимость</p>
+            <p class="eyebrow" id="result-label">Предварительная стоимость строительства</p>
             <output id="price" for="area-number area-range">—</output>
             <p id="formula" class="formula"></p>
             <hr>
-            <h3>Что входит</h3>
+            <h3 id="result-heading">Что входит</h3>
             <ul class="included" id="included"></ul>
             <div id="addition" class="addition" hidden></div>
+            <p id="land-result" class="land-result" hidden aria-live="polite"></p>
             <a class="button button-dark" href="#estimate" id="estimate-link">Заявка на смету <span aria-hidden="true">↗</span></a>
-            <small class="demo-note">Демонстрационный расчёт по площади</small>
+            <small class="demo-note" id="calc-note">Расчёт по площади. Подготовку участка, доставку и подключение внешних сетей уточняют в смете.</small>
           </div>
         </div>
       </div>
@@ -133,13 +221,47 @@
       </div>
     </section>
 
+    <section class="section wrap process" id="process" aria-labelledby="process-title">
+      <div class="section-heading">
+        <h2 id="process-title">От проекта<br>до приёмки</h2>
+        <p>Стоимость и состав работ зависят от проекта, состояния участка и выбранной комплектации.</p>
+      </div>
+      <ol class="process-steps">
+        <li><h3>Уточняем задачу</h3><p>Обсуждаем планировку, участок и подъезд. Для достройки и отопления сначала смотрим, что уже сделано.</p></li>
+        <li><h3>Согласуем смету</h3><p>Разносим материалы и работы по этапам. Отдельно указываем работы по участку и подключения, если они нужны.</p></li>
+        <li><h3>Строим и проверяем</h3><p>Сверяем выполненные работы с согласованным списком. Перед приёмкой проверяем работы и оборудование, которые вошли в смету.</p></li>
+      </ol>
+      <details class="sample-estimate">
+        <summary>Посмотреть пример расчёта для дома «Сосны»</summary>
+        <dl class="estimate-lines">
+          <div><dt>112 м² без отделки × 48 000 ₽/м²</dt><dd>5 376 000 ₽</dd></div>
+          <div><dt>Отделка и инженерные системы внутри дома</dt><dd>+2 800 000 ₽</dd></div>
+          <div><dt>Готовый дом</dt><dd>8 176 000 ₽</dd></div>
+        </dl>
+        <p>Учебный пример по ставкам калькулятора. В смете для участка работы и материалы расписаны по позициям, а доставку и подключение внешних сетей уточняют отдельно.</p>
+      </details>
+    </section>
+
     <section class="section warranty" id="warranty" aria-labelledby="warranty-title">
       <div class="wrap warranty-layout">
-        <div><h2 id="warranty-title">Гарантии</h2><p>Пример условий для разных видов работ.</p></div>
+        <div><h2 id="warranty-title">Гарантии</h2><p>Перед началом работ проверьте в договоре срок гарантии, дату её начала и порядок обращения по каждому виду работ.</p></div>
         <div class="warranty-items">
           <details><summary>Конструкция дома</summary><p>Условия по фундаменту, стенам и кровле описываются в договоре. При обнаружении дефекта пригодятся фотографии и описание того, где и когда он появился.</p></details>
           <details><summary>Монтаж и отделка</summary><p>Гарантия распространяется на работы, перечисленные в договоре. Замечания при приёмке фиксируются в акте, чтобы было понятно, что нужно исправить.</p></details>
           <details><summary>Оборудование</summary><p>Для печей, отопительного и другого оборудования действуют условия производителя. Вместе с оборудованием передаются паспорта и инструкции.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap faq" id="faq" aria-labelledby="faq-title">
+      <div class="warranty-layout">
+        <div><h2 id="faq-title">Частые<br>вопросы</h2><p>Что стоит уточнить до выбора проекта и подписания договора.</p></div>
+        <div class="warranty-items">
+          <details><summary>Можно ли платить в рассрочку?</summary><p>График платежей можно обсудить на этапе сметы. Суммы, даты и возможность рассрочки зависят от условий договора. На сайте фиксированных условий рассрочки нет.</p></details>
+          <details><summary>Можно ли использовать материнский капитал?</summary><p>Социальный фонд России предусматривает оплату строительства жилого дома с подрядчиком через счёт эскроу при соблюдении условий программы. Возможность оплаты нужно проверять для конкретного договора и участка. <a href="https://sfr.gov.ru/grazhdanam/semyam_s_detmi/materinskij_kapital/zhile/">Условия на сайте СФР</a>.</p></details>
+          <details><summary>Можно ли изменить планировку?</summary><p>Да. Отметьте на плане, какую перегородку, окно или террасу хотите изменить. Сначала проверяем, как это повлияет на конструкцию и стоимость, затем согласуем изменения в смете.</p></details>
+          <details><summary>С чего начать, если участка ещё нет?</summary><p>Выберите примерную площадь и комплектацию, чтобы оценить бюджет стройки. В калькуляторе можно отдельно указать свой бюджет на землю. Перед покупкой полезно уточнить габариты проекта, подъезд и доступные коммуникации.</p></details>
+          <details><summary>Берётесь за дома после другой бригады?</summary><p>Да, после осмотра. Укажите, что уже сделано и какие работы остались. Замену или модернизацию отопления можно обсудить отдельно, в том числе для дома, в котором вы уже живёте.</p></details>
         </div>
       </div>
     </section>

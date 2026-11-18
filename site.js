@@ -175,6 +175,7 @@ grid.addEventListener("click", event => {
   }
   if (control.dataset.calculate) {
     const project = projects.find(item => item.id === control.dataset.calculate);
+    setCalcMode("build");
     setType(project.type, project);
   }
 });
@@ -185,6 +186,12 @@ const areaError = select("#area-error");
 const estimateLink = select("#estimate-link");
 const typeButtons = all("[data-calc-type]");
 const packageInputs = all('input[name="package"]');
+const modeButtons = all("[data-calc-mode]");
+const landButtons = all("[data-land]");
+const landBudget = select("#land-budget");
+const heatArea = select("#heat-area");
+let calcMode = "build";
+let landStatus = "owned";
 let calcType = "home";
 let selected = null;
 let area = specs.home.initial;
@@ -233,28 +240,104 @@ function setArea(value, syncNumber = true) {
 }
 
 function updateEstimate(animate = false) {
+  if (calcMode !== "build") {
+    updateServiceEstimate();
+    return;
+  }
   const spec = specs[calcType];
   const ready = packageInputs[1].checked;
   const rate = ready ? spec.ready : spec.shell;
   const valid = area !== null;
   const price = valid ? money.format(area * rate) : "—";
+  const landResult = select("#land-result");
+  const searching = landStatus === "search";
+  const landValid = !searching || landBudget.validity.valid;
+  const land = searching && landValid ? landBudget.valueAsNumber : NaN;
+  const includesLand = valid && Number.isFinite(land);
+  const total = includesLand ? money.format(area * rate + land) : price;
+  select("#result-label").textContent = "Предварительная стоимость строительства";
+  select("#result-heading").textContent = "Что входит";
+  select("#calc-note").textContent = "Демонстрационный расчёт. Подготовку участка, доставку и подключение внешних сетей уточняют в смете.";
+  landResult.hidden = !searching;
+  if (searching) {
+    landResult.textContent = !landValid ? "Укажите целую сумму от 0 до 1 млрд ₽."
+      : includesLand ? `Земля по вашему бюджету: ${money.format(land)}. Всего со стройкой: ${total}.`
+      : "Стоимость земли учитывается отдельно. Для общей суммы укажите бюджет на участок.";
+  }
   select("#price").value = price;
   select("#formula").textContent = valid
     ? `${area} м² × ${money.format(rate)} за м²`
     : "Стоимость появится после ввода площади.";
-  estimateLink.setAttribute("aria-disabled", String(!valid));
+  estimateLink.setAttribute("aria-disabled", String(!valid || !landValid));
   select("#included").innerHTML = [...spec.base, ...(ready ? spec.extra : [])].map(item => `<li>${item}</li>`).join("");
   select("#addition").hidden = !ready || !valid;
   if (ready && valid) {
     select("#addition").textContent = `+${money.format(area * (spec.ready - spec.shell))} к варианту без отделки`;
   }
-  select("#summary-text").textContent = valid
-    ? `${selected?.name ?? spec.name} · ${area} м² · ${ready ? spec.readyName : spec.shellName}`
-    : "";
-  select("#summary-price").textContent = price;
-  select("#estimate-summary").hidden = !estimateRequested || !valid;
+  const summary = `${selected?.name ?? spec.name} · ${area} м² · ${ready ? spec.readyName : spec.shellName}`;
+  showEstimateSummary(
+    `${summary} · ${searching ? "участок ещё выбирают" : "участок есть"}`,
+    includesLand ? `${total} с бюджетом на землю` : price,
+    valid && landValid,
+  );
   if (animate) accent([select("#price"), select("#included")]);
 }
+
+function showEstimateSummary(description, price, valid) {
+  select("#summary-text").textContent = valid ? description : "";
+  select("#summary-price").textContent = valid ? price : "";
+  select("#estimate-summary").hidden = !estimateRequested || !valid;
+}
+
+function updateServiceEstimate() {
+  const finishing = calcMode === "finish";
+  const valid = finishing || heatArea.validity.valid;
+  const works = all('[name="finish-work"]:checked').map(input => input.value);
+  const details = finishing
+    ? [select("#finish-stage").value, ...(works.length ? works : ["Список работ уточним при осмотре"])]
+    : [select("#heat-task").value, select("#heat-current").value, ...(heatArea.value ? [`${heatArea.value} м²`] : [])];
+  select("#result-label").textContent = finishing ? "Достройка дома" : "Отопление";
+  select("#price").value = "После осмотра";
+  select("#formula").textContent = !valid ? "Укажите целую площадь от 1 до 10 000 м²."
+    : finishing ? "Проверим выполненные работы и оценим, что осталось достроить."
+    : "Оценим состояние системы, площадь дома и объём работ.";
+  select("#result-heading").textContent = "Данные для сметы";
+  const items = details.map(detail => {
+    const item = document.createElement("li");
+    item.textContent = detail;
+    return item;
+  });
+  select("#included").replaceChildren(...items);
+  select("#addition").hidden = true;
+  select("#land-result").hidden = true;
+  select("#calc-note").textContent = "Выбранные параметры перенесутся в демо-заявку.";
+  estimateLink.setAttribute("aria-disabled", String(!valid));
+  showEstimateSummary([finishing ? "Достройка" : "Отопление", ...details].join(" · "), "Смета после осмотра", valid);
+}
+
+function setCalcMode(mode) {
+  calcMode = mode;
+  select("#calculator").dataset.mode = mode;
+  press(modeButtons, "calcMode", mode);
+  modeButtons.forEach(button => {
+    const panel = select(`#${button.dataset.calcMode}-fields`);
+    panel.hidden = button.dataset.calcMode !== mode;
+  });
+  updateEstimate();
+}
+
+modeButtons.forEach(button => button.addEventListener("click", () => setCalcMode(button.dataset.calcMode)));
+all("[data-service]").forEach(link => link.addEventListener("click", () => setCalcMode(link.dataset.service)));
+landButtons.forEach(button => button.addEventListener("click", () => {
+  landStatus = button.dataset.land;
+  press(landButtons, "land", landStatus);
+  select("#land-field").hidden = landStatus !== "search";
+  updateEstimate();
+}));
+landBudget.addEventListener("input", () => updateEstimate());
+all("#finish-fields input, #finish-fields select, #heat-fields input, #heat-fields select").forEach(input => {
+  input.addEventListener("input", () => updateEstimate());
+});
 
 typeButtons.forEach(button => button.addEventListener("click", () => {
   if (calcType !== button.dataset.calcType) setType(button.dataset.calcType);
@@ -353,9 +436,10 @@ function resetForm() {
 }
 
 estimateLink.addEventListener("click", event => {
-  if (area === null) {
+  if (estimateLink.getAttribute("aria-disabled") === "true") {
     event.preventDefault();
-    number.focus();
+    const invalidField = calcMode === "heat" ? heatArea : area === null ? number : landBudget;
+    invalidField.focus();
     return;
   }
   estimateRequested = true;
@@ -396,26 +480,42 @@ select("#return-projects").addEventListener("click", () => {
 renderCatalog("home");
 setType("home");
 
+const menuToggle = select(".menu-toggle");
+const nav = select("#main-nav");
+
+function closeMenu() {
+  menuToggle.setAttribute("aria-expanded", "false");
+}
+
+menuToggle.addEventListener("click", () => {
+  const open = menuToggle.getAttribute("aria-expanded") === "true";
+  menuToggle.setAttribute("aria-expanded", String(!open));
+});
+nav.addEventListener("click", event => {
+  const link = event.target.closest("a");
+  if (!link || menuToggle.getAttribute("aria-expanded") !== "true") return;
+  closeMenu();
+  const target = document.getElementById(link.hash.slice(1));
+  if (target) {
+    target.setAttribute("tabindex", "-1");
+    target.focus({ preventScroll: true });
+  }
+});
+document.addEventListener("click", event => {
+  if (!event.target.closest(".masthead")) closeMenu();
+});
+document.addEventListener("keydown", event => {
+  if (event.key !== "Escape" || menuToggle.getAttribute("aria-expanded") !== "true") return;
+  closeMenu();
+  menuToggle.focus();
+});
+
 if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
   gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
-    const phoneHero = matchMedia("(max-width: 600px) and (orientation: portrait)").matches;
-    const heroTimeline = gsap.timeline({ defaults: { ease: "power2.out", clearProps: "transform,opacity" } })
-      .from(".hero-title-main, .hero-title-sub", { opacity: 0.68, y: 9, duration: 0.43, stagger: 0.09 }, 0)
-      .from(phoneHero ? ".extension:first-child" : ".extension", { scaleY: 0, duration: 0.21 }, 0.15)
-      .from(".dimension", { scaleX: 0, duration: 0.35 }, 0.36);
-    if (phoneHero) {
-      heroTimeline
-        .from(".extension:nth-child(2)", { scaleY: 0, duration: 0.14 }, 0.71)
-        .from(".hero-phone-area", { opacity: 0, y: 4, duration: 0.2 }, 0.81);
-    } else {
-      heroTimeline.from(".hero-caption", { opacity: 0, y: 4, duration: 0.2 }, 0.65);
-    }
-    all(".section-heading, .warranty-layout, .form-stage").forEach(section => {
-      gsap.from(section, {
-        y: 13, opacity: 0.84, duration: 0.46, ease: "power2.out",
-        clearProps: "transform,opacity", scrollTrigger: { trigger: section, start: "top 93%", once: true },
-      });
+    gsap.from(".hero-title-main, .hero-title-sub", {
+      opacity: 0.75, y: 5, duration: 0.42, stagger: 0.07,
+      ease: "power2.out", clearProps: "transform,opacity",
     });
   });
 }
