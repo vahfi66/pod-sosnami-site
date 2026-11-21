@@ -482,33 +482,71 @@ setType("home");
 
 const menuToggle = select(".menu-toggle");
 const nav = select("#main-nav");
+const menuDrawer = select("#menu-drawer");
+const masthead = select(".masthead");
+let closingMenu = false;
 
-function closeMenu() {
+function closeMenu(afterClose) {
+  if (!menuDrawer.open || closingMenu) return;
+  closingMenu = true;
   menuToggle.setAttribute("aria-expanded", "false");
+  menuDrawer.classList.remove("is-open");
+  const finish = () => {
+    menuDrawer.close();
+    document.documentElement.classList.remove("menu-open");
+    document.documentElement.style.removeProperty("--scrollbar-gap");
+    closingMenu = false;
+    if (afterClose) afterClose();
+  };
+  if (window.gsap && motion.matches) {
+    gsap.to(menuDrawer, { xPercent: -100, duration: 0.24, ease: "power2.in", overwrite: true, onComplete: finish });
+  } else {
+    finish();
+  }
 }
 
 menuToggle.addEventListener("click", () => {
-  const open = menuToggle.getAttribute("aria-expanded") === "true";
-  menuToggle.setAttribute("aria-expanded", String(!open));
+  if (menuDrawer.open) return;
+  const gap = window.innerWidth - document.documentElement.clientWidth;
+  document.documentElement.style.setProperty("--scrollbar-gap", `${gap}px`);
+  document.documentElement.classList.add("menu-open");
+  menuDrawer.showModal();
+  menuToggle.setAttribute("aria-expanded", "true");
+  menuDrawer.classList.add("is-open");
+  if (window.gsap && motion.matches) {
+    gsap.fromTo(menuDrawer, { xPercent: -100 }, {
+      xPercent: 0, duration: 0.36, ease: "power3.out", overwrite: true,
+    });
+  } else {
+    menuDrawer.style.transform = "none";
+  }
 });
 nav.addEventListener("click", event => {
   const link = event.target.closest("a");
-  if (!link || menuToggle.getAttribute("aria-expanded") !== "true") return;
-  closeMenu();
-  const target = document.getElementById(link.hash.slice(1));
-  if (target) {
+  if (!link) return;
+  event.preventDefault();
+  closeMenu(() => {
+    const target = document.getElementById(link.hash.slice(1));
+    if (!target) return;
+    history.pushState(null, "", link.hash);
     target.setAttribute("tabindex", "-1");
-    target.focus({ preventScroll: true });
-  }
+    goTo(target.id);
+  });
 });
-document.addEventListener("click", event => {
-  if (!event.target.closest(".masthead")) closeMenu();
-});
-document.addEventListener("keydown", event => {
-  if (event.key !== "Escape" || menuToggle.getAttribute("aria-expanded") !== "true") return;
+select(".menu-close").addEventListener("click", () => closeMenu());
+menuDrawer.addEventListener("cancel", event => {
+  event.preventDefault();
   closeMenu();
-  menuToggle.focus();
 });
+menuDrawer.addEventListener("click", event => {
+  if (event.target !== menuDrawer) return;
+  const bounds = menuDrawer.getBoundingClientRect();
+  if (event.clientX < bounds.left || event.clientX > bounds.right ||
+      event.clientY < bounds.top || event.clientY > bounds.bottom) closeMenu();
+});
+const updateHeader = () => masthead.classList.toggle("is-scrolled", window.scrollY >= 28);
+window.addEventListener("scroll", updateHeader, { passive: true });
+updateHeader();
 
 if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);

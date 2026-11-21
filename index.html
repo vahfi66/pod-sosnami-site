@@ -17,8 +17,17 @@
   <a class="skip" href="#hero-title">Перейти к содержимому</a>
   <header class="masthead">
     <div class="wrap masthead-inner">
+      <button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="menu-drawer" aria-haspopup="dialog">
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
       <a class="brand" href="#top">Под соснами</a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">Меню</button>
+    </div>
+  </header>
+  <dialog class="menu-drawer" id="menu-drawer" aria-labelledby="menu-title">
+    <div class="drawer-heading">
+      <h2 id="menu-title">Меню</h2>
+      <button class="menu-close" type="button" aria-label="Закрыть меню">×</button>
+    </div>
       <nav id="main-nav" aria-label="Основная навигация">
         <a href="#projects" data-category="home">Дома</a>
         <a href="#projects" data-category="bath">Бани</a>
@@ -29,8 +38,8 @@
         <a href="#faq">Вопросы</a>
         <a class="nav-estimate" href="#estimate">Заявка на смету</a>
       </nav>
-    </div>
-  </header>
+      <p class="drawer-note">Дома, бани и жизнь за городом</p>
+  </dialog>
   <main id="top">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-scene">
