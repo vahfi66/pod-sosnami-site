@@ -499,7 +499,7 @@ function closeMenu(afterClose) {
     if (afterClose) afterClose();
   };
   if (window.gsap && motion.matches) {
-    gsap.to(menuDrawer, { xPercent: -100, duration: 0.24, ease: "power2.in", overwrite: true, onComplete: finish });
+    gsap.to(menuDrawer, { xPercent: -100, duration: 0.48, ease: "power2.inOut", overwrite: true, onComplete: finish });
   } else {
     finish();
   }
@@ -515,7 +515,7 @@ menuToggle.addEventListener("click", () => {
   menuDrawer.classList.add("is-open");
   if (window.gsap && motion.matches) {
     gsap.fromTo(menuDrawer, { xPercent: -100 }, {
-      xPercent: 0, duration: 0.36, ease: "power3.out", overwrite: true,
+      xPercent: 0, duration: 0.6, ease: "power3.out", overwrite: true,
     });
   } else {
     menuDrawer.style.transform = "none";
